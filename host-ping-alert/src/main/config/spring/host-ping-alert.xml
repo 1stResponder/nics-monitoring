@@ -1,0 +1,154 @@
+<!--
+
+    Copyright (c) 2008-2015, Massachusetts Institute of Technology (MIT)
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice, this
+    list of conditions and the following disclaimer.
+
+    2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+    3. Neither the name of the copyright holder nor the names of its contributors
+    may be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<!-- 
+	name: host-ping-alert.xml
+	desc: host-ping-alert
+	auth: jpullen	
+	date: 20120427
+	vers: host-ping-alert-0.0.2
+ -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans    
+    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+    http://camel.apache.org/schema/spring 
+    http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<bean id="log4jInitialization" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    	<property name="targetClass" value="org.springframework.util.Log4jConfigurer" />
+		<property name="targetMethod" value="initLogging" />
+		<property name="arguments">
+			<list>
+				<value>config/log4j.properties</value>
+			</list>
+		</property>
+    </bean>
+    
+	<!-- Property file for beans and routes -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    	<property name="location">
+        	<value>config/host-ping-alert.properties</value>
+        </property>
+    </bean>
+
+    <!-- Pings specified host, and if no response, will send email alert -->
+	<bean id="pingProc" class="edu.mit.ll.nics.mach.ping.HostPingAlert" init-method="init">
+		
+		<!-- 
+			The name of the route being used below, so code can stop/restart it if
+			necessary.
+			
+			Default: processPingsRoute 
+		-->
+		<property name="routeName" value="processPingsRoute" />
+		
+		<!-- log4j properties filename 
+			Default: log4j.properties
+			Note: Should match the log4jInitialization bean above
+		-->
+		<property name="log4jProperties" value="${log4jProperties}" />
+		
+		<property name="hosts" value="${hosts}" /> 
+		
+		<property name="pages" value="${pages}" />
+		
+		<!-- A JAVA regex pattern used to match content in the response from the URLS.  Currently you can only
+             specify one pattern for all URLs, unfortunately.  Currently NICS-centric.
+        -->
+        <property name="pagePattern" value="${pagePattern}" />
+		
+		<property name="emailConsumer" value="${emailConsumer}" />
+		
+		<property name="subscribers" value="${subscribers}" />
+		
+		<property name="fromEmail" value="${fromEmail}" />
+		
+		<!-- Length of time before host is considered unreachable -->
+		<property name="timeout" value="${timeout}" />
+		
+		<!-- Max number of hops the ping packet takes -->
+		<property name="maxhops" value="${maxhops}" />
+		
+		<!-- Minutes between reminder emails once the initial one is triggered -->
+		<property name="minsBetweenReminders" value="${minsBetweenReminders}" />
+
+        <property name="emailAlertFactory" ref="eaf" />
+
+		<!-- 
+			Whether or not to show HTML responses in DEBUG level logging 
+		 	Default: false 
+		<property name="showResponseInDebug" value="${showResponseInDebug}" /> -->
+	</bean>
+
+    <bean id="ef" class="edu.mit.ll.nics.common.email.EmailFactory">
+        <property name="context" ref="camel" />
+    </bean>
+    
+    <bean id="eaf" class="edu.mit.ll.nics.common.alert.EmailAlertFactory" init-method="init" destroy-method="close">
+        <property name="emailFactory" ref="ef" />
+    </bean>
+    
+    <!-- Main Camel Context -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    
+    	<!-- This properties file is used for Camel Route configuration
+    		NOTE: This is the same property file as above in the Spring XML, but due to
+    			  a spring issue, you can't use ${} in the camel routes, so we also
+    			  have to load the property file here, and use the {{}} notation in routes.
+    			  
+    			  A workaround exists where you define endpoints in <endpoint> tags, which allow ${}, then
+    			  you'd have to refer to your endpoint with a reference like <from uri='ref:endpointname' />
+    	--> 
+		<propertyPlaceholder id="props" location="file:config/host-ping-alert.properties"/>
+		
+
+    	<!-- 
+    		Main Route: Must match routeName property on host-ping-alert bean above    		
+    	 -->
+        <route id="processPingsRoute">
+            
+            <!-- *** TODO: Timer based call to processor  *** -->            
+            <from uri="{{from}}"/>
+         	<transform>
+		    	<simple>PING</simple> 
+			</transform>
+            
+            <!-- Processor that pings the host, and sends email if necessary -->
+            <process ref="pingProc" />
+            
+            <!-- Log/stream:out, etc -->
+            <to uri="{{to}}" />
+		</route>
+
+    </camelContext>
+</beans>

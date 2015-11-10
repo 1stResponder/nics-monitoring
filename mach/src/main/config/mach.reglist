@@ -1,0 +1,4 @@
+{"mach":{"type":"register","name":"entity-consumer","node":"nodename","timestamp":"2011-08-15 19:27:32","body":{"topic":"LDDRS.incidents","path":"","category":"Camel"}}}
+#{"mach":{"type":"register","name":"collabRoomState2","node":"test","timestamp":"2011-08-15 19:27:32","body":{"topic":"LDDRS.incidents.*.collab.2","path":"","category":"Camel"}}}
+#{"mach":{"type":"register","name":"collabRoomState3","node":"test","timestamp":"2011-08-15 19:27:32","body":{"topic":"LDDRS.incidents.*.collab.3","path":"","category":"Camel"}}}
+#{"mach":{"type":"register","name":"collabRoomState4","node":"test","timestamp":"2011-08-15 19:27:32","body":{"topic":"LDDRS.incidents.*.collab.4","path":"","category":"Camel"}}}

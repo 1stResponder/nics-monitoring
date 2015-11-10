@@ -1,0 +1,7 @@
+mvn clean compile package
+
+cp src/main/resources/* target/
+
+cd target/
+
+./runAgentTest.sh

@@ -1,0 +1,273 @@
+#!/bin/bash
+# Version 1 - 17 (at least) 27 Jul 2011 
+#----- manage lddrs applications 
+# useage -  appRunner semantics
+#   appMgr appId action Modifier
+
+# Ingest Delorme inReach placemarks and publish to delorm amqp topic
+function delormeKmlBridge() {
+local APPID="delormKmlBridge"
+local APPHOME="./transportBridge"
+export APPINVOKE="./delormeKmlBridge.cmd"
+cd $APPHOME
+POLLTIME=300
+appRunner $APPID $*
+}
+
+function mobilePLIBridge() {
+local APPID="mobilePLIBridge"
+local APPHOME="./transportBridge"
+export APPINVOKE="./mobilePLIBridge.cmd"
+cd $APPHOME
+POLLTIME=300
+appRunner $APPID $*
+}
+
+# Host Ping Alert pings a host, and if it fails to respond, sends email alerts
+function host-ping-alert() {
+  local APPID="host-ping-alert"
+  local APPHOME="./host-ping-alert"
+  export APPINVOKE="/home/dmit/lddrsDeploy/host-ping-alert/runSpring.sh"
+  export NAME="host-ping-alert"
+  cd $APPHOME
+  appRunner $APPID $*
+}
+
+
+
+# Ingest tunnel sensor CAP messages and publish to CAP topic
+function tunnelCAPbridge() {
+local APPID="tunnelCAPbridge"
+local APPHOME="./transportBridge"
+export APPINVOKE="./tunnelCAPbridge.cmd"
+cd $APPHOME
+POLLTIME=300
+appRunner $APPID $*
+}
+
+# Ingest binary PECOS messages and output xml
+#function pecosProcessor() {
+#local APPID="pecosProcessor"
+#local APPHOME="./pecosProcessor"
+#export APPINVOKE="java -jar pecosProcessor-0.0.2-SNAPSHOT-jar-with-dependencies.jar"
+#cd $APPHOME
+#appRunner $APPID $*
+#}
+
+function pecosProcessor() {
+local APPID="pecosProcessor"
+local APPHOME="./pecosProcessor"
+export APPINVOKE="/home/dmit/lddrsDeploy/pecosProcessor/runPecosSpring.sh"
+export NAME="pecosProcessor"
+cd $APPHOME
+appRunner $APPID $*
+}
+
+function pecosUdop() {
+local APPID="pecosUdop"
+local APPHOME="./placemarkUdop"
+export APPINVOKE="/home/dmit/lddrsDeploy/placemarkUdop/runSpring.sh"
+export NAME="placemarkUdop"
+cd $APPHOME
+appRunner $APPID $*
+}
+
+function nmea-proc() {
+local APPID="nmea-proc"
+local APPHOME="./nmea-proc"
+export APPINVOKE="/home/dmit/lddrsDeploy/nmea-proc/runSpring.sh"
+export NAME="nmea-proc"
+cd $APPHOME
+appRunner $APPID $*
+}
+
+function nmea-proc-gml() {
+local APPID="nmea-proc-gml"
+local APPHOME="./nmea-proc"
+export APPINVOKE="/home/dmit/lddrsDeploy/nmea-proc/runSplit.sh"
+export NAME="nmea-proc-gml"
+cd $APPHOME
+appRunner $APPID $*
+}
+
+function rcip() {
+local APPID="rcip"
+local APPHOME="./rcip"
+export APPINVOKE="/home/dmit/lddrsDeploy/rcip/runSpring.sh"
+export NAME="rcip-proc"
+cd $APPHOME
+appRunner $APPID $*
+}
+
+
+# Ingest RRU gst/avl via UDP, transform to kml, publish to RabbitMQ
+function gst2kmlAmqp() {
+local APPID="gst2kmlAmqp"
+local APPHOME="/home/dmit/lddrsDeploy/gstAvl"
+export APPINVOKE="/home/dmit/bin/runSpring.sh"
+export NAME=${APPID}
+cd $APPHOME
+POLLTIME=300
+appRunner $APPID $*
+}
+
+function gst2kmlLog() {
+local APPID="gst2kmlLog"
+local APPHOME="/home/dmit/lddrsDeploy/gstAvl"
+export APPINVOKE="/home/dmit/bin/runSpring.sh"
+export NAME=${APPID}
+cd $APPHOME
+POLLTIME=300
+appRunner $APPID $*
+}
+
+# Ingest RRU gpsGate tracks via UDP, transform to kml, publish to RabbitMQ
+function gpsgate2kml() {
+local APPID="gpsgate2kml"
+local APPHOME="/home/dmit/lddrsDeploy/gstAvl"
+export APPINVOKE="/home/dmit/bin/runSpring.sh"
+export NAME=${APPID}
+cd $APPHOME
+POLLTIME=300
+appRunner $APPID $*
+}
+
+
+# Ingest RRU gst/avl via UDP, transform to kml, publish to message bus
+function gst2kmlXmpp() {
+local APPID="gst2kmlXmpp"
+local APPHOME="/home/dmit/lddrsDeploy/gstAvl"
+export APPINVOKE="/home/dmit/lddrsDeploy/runSpring.sh"
+export NAME=${APPID}
+cd $APPHOME
+POLLTIME=300
+appRunner $APPID $*
+}
+
+
+# Ingest RRU gst/avl via UDP, transform to kml, publish to message bus
+#function gstAvl2MsgBus() {
+#local APPID="gstAvl2MsgBus"
+#local APPHOME="gstAvl"
+#export APPINVOKE="./gst2kml.sh"
+#cd $APPHOME
+#POLLTIME=300
+#appRunner $APPID $*
+#}
+
+#----- Ingest NPS PLI via UDP, convert to placemarks, publish to xmpp npspli room on lddr3
+function npsPli() {
+local APPID="npsPli"
+local APPHOME="./npsPli"
+export APPINVOKE="./npsPli.sh"
+cd $APPHOME
+POLLTIME=300
+appRunner $APPID $*
+}
+
+#----- Ingest nmea singletons from BHPD, convert to kml singletons, publish
+function nmea2kmlBhpd() {
+local APPID="nmea2kmlBhpd"
+local APPHOME="./nmea2kml"
+export APPINVOKE="java -jar nmea2kml-1.0-SNAPSHOT-jar-with-dependencies.jar"
+cd $APPHOME
+POLLTIME=300
+appRunner $APPID $*
+}
+
+#Consume collaboration room feeds
+function geodatafeedConsumer() {
+local APPID="geodatafeedConsumer"
+local APPHOME="./geodatafeedConsumer"
+APPJAR="./geodatafeedConsumer-1.0-jar-with-dependencies.jar"
+APPPROPS="./geodatafeedConsumer.properties"
+
+cd $APPHOME;
+export APPINVOKE="java -server -Xms128m -Xmx1536m -XX:ThreadStackSize=320 -XX:ParallelGCThreads=10 \
+-XX:+UseParallelGC -XX:GCTimeRatio=19 -jar ${APPJAR} -p ${APPPROPS}"
+
+POLLTIME=300
+appRunner $APPID $*
+}
+
+#Maintain FDNY CRIMS data feeds
+function fdnyIncidentManager() {
+local APPID="fdnyIncidentManager"
+local APPHOME="./fdnyIncidentManager"
+#APPJAR="./FDNYIncidentManager-1.0_Camel2.8.1-jar-with-dependencies.jar"
+APPJAR="./FDNYIncidentManager-1.1_Camel2.9.0-jar-with-dependencies.jar"
+APPPROPS="./fdnyincidentmanager.properties"
+
+cd $APPHOME;
+export APPINVOKE="java -server -Xms128m -Xmx1536m -XX:ThreadStackSize=320 -XX:ParallelGCThreads=10 \
+-XX:+UseParallelGC -XX:GCTimeRatio=19 -jar ${APPJAR} -p ${APPPROPS}"
+
+POLLTIME=300
+appRunner $APPID $*
+}
+
+
+#---- no function available
+function error() {
+   echo "Application $1 not found"
+}
+
+
+#--- get status for all apps
+function statusAll() {
+   for app in $APPS
+   do
+      ./appMgr $app status
+   done
+}
+
+#--- list all app ids
+function listAll() {
+    for app in $APPS; do echo "$app"; done
+}
+
+#--- help
+function help() {
+   PREAMBLE="appMgr applicationIdentifier"
+   echo "General: "
+   appRunner help | sed "s/appRunner/appMgr/"
+   echo "Local:
+appMgr statusAll
+appMgr listAll
+appMgr help"
+}
+
+#========= implementation for function appMgr appId action [actionModifier]
+#  appId and function must match, else error
+
+APPS="fdnyIncidentManager geodatafeedConsumer mobilePLIBridge delormeKmlBridge"
+APPS="${APPS} gpsgate2kml gst2kmlAmqp gst2kmlLog gst2kmlXmpp nmea2kmlBhpd npsPli tunnelCAPbridge pecosProcessor pecosUdop rcip nmea-proc nmea-proc-gml host-ping-alert"
+#APPS="${APPS} gstAvl2MsgBus"
+
+APPID=$1; shift 1;   # get the app
+
+case $APPID in       # select and execute functions
+error)               $APPID $* ;;
+fdnyIncidentManager) $APPID $* ;;
+geodatafeedConsumer) $APPID $* ;;
+delormeKmlBridge)    $APPID $* ;;
+mobilePLIBridge)     $APPID $* ;;
+#gstAvl2MsgBus)       $APPID $* ;;
+gst2kmlAmqp)         $APPID $* ;;
+gst2kmlLog)          $APPID $* ;;
+gst2kmlXmpp)         $APPID $* ;;
+nmea2kmlBhpd)        $APPID $* ;;
+gpsgate2kml)	     $APPID $* ;;
+npsPli)              $APPID $* ;;
+tunnelCAPbridge)     $APPID $* ;;
+pecosProcessor)	     $APPID $* ;;
+pecosUdop)	     $APPID $* ;;
+nmea-proc)	     $APPID $* ;;
+nmea-proc-gml)	     $APPID $* ;;
+rcip)		     $APPID $* ;;
+host-ping-alert)     $APPID $* ;;
+help) help ;;
+statusAll) statusAll ;;
+listAll) listAll ;;
+*) echo "Unknown application ID $APPID" ;;
+esac
