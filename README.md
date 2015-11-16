@@ -1,4 +1,4 @@
 nics-monitoring
 ===============
 
-Components for monitoring NICS
+Components for monitoring NICS services
