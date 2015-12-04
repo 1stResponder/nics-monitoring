@@ -42,17 +42,17 @@
 	<packaging>pom</packaging>
 
 	<!-- Project information -->
-	<name>Monitoring, Control and Health (MACH)</name>
-	<description>Aggregator project for MACH components</description>
+	<name>Monitoring</name>
+	<description>Aggregator project for Monitoring components</description>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<nics.version>${project.version}</nics.version>
-		<camel.version>2.9.0</camel.version>
+		<camel.version>2.14.3</camel.version>
 		<log4j.version>1.2.17</log4j.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<slf4j.version>1.7.1</slf4j.version>
 		<testng.version>6.8</testng.version>
-		<db4o.version>8.1-SNAPSHOT</db4o.version>
 		<json.version>20090211</json.version>
 		<dependency.plugin.version>2.5.1</dependency.plugin.version>
 		<java.compiler.version>1.6</java.compiler.version>
@@ -90,6 +90,11 @@
 				<version>${camel.version}</version>
 			</dependency>
 			<dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-rabbitmq</artifactId>
+                <version>${camel.version}</version>
+            </dependency>
+			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-simple</artifactId>
 				<version>${slf4j.version}</version>
@@ -99,33 +104,11 @@
 				<artifactId>testng</artifactId>
 				<version>${testng.version}</version>
 			</dependency>
-			<!-- NICS internal module dependencies -->
-			<dependency>
-				<groupId>edu.mit.ll.nics.monitoring</groupId>
-				<artifactId>mach-agent</artifactId>
-				<version>${nics.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>edu.mit.ll.nics.monitoring</groupId>
-				<artifactId>mach-messages</artifactId>
-				<version>${nics.version}</version>
-			</dependency>
-			<!-- External dependencies -->
-			<dependency>
-				<groupId>com.db4o</groupId>
-				<artifactId>db4o-full-java5</artifactId>
-				<version>${db4o.version}</version>
-			</dependency>
 
 			<!-- MITLL dependencies -->
 			<dependency>
 				<groupId>edu.mit.ll.nics.common</groupId>
 				<artifactId>email-alert</artifactId>
-				<version>${nics.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>edu.mit.ll.nics.common</groupId>
-				<artifactId>RabbitMQCamelComponent</artifactId>
 				<version>${nics.version}</version>
 			</dependency>
 			<dependency>
@@ -283,11 +266,8 @@
 		</plugins>
 	</build>
 
-	<!-- MACH submodules -->
+	<!-- Monitoring submodules -->
 	<modules>
-		<module>mach</module>
-		<module>mach-agent</module>
-		<module>mach-messages</module>
 		<module>host-ping-alert</module>
 	</modules>
 
