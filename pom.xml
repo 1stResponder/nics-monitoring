@@ -47,18 +47,22 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<nics.version>${project.version}</nics.version>
+
+		<assembly.plugin.version>2.3</assembly.plugin.version>
 		<camel.version>2.14.3</camel.version>
-		<log4j.version>1.2.17</log4j.version>
 		<commons-lang.version>2.6</commons-lang.version>
-		<slf4j.version>1.7.1</slf4j.version>
-		<testng.version>6.8</testng.version>
-		<json.version>20090211</json.version>
+		<compiler.plugin.version>2.5.1</compiler.plugin.version>
+		<dependency.plugin.version>2.5.1</dependency.plugin.version>
 		<dependency.plugin.version>2.5.1</dependency.plugin.version>
 		<java.compiler.version>1.6</java.compiler.version>
-		<compiler.plugin.version>2.5.1</compiler.plugin.version>
+		<json.version>20090211</json.version>
 		<junit.version>4.10</junit.version>
 		<license.plugin.version>1.9.0</license.plugin.version>
+		<log4j.version>1.2.17</log4j.version>
+		<nics.version>6.4-SNAPSHOT</nics.version>
+		<slf4j.version>1.7.1</slf4j.version>
+		<surefire.plugin.version>2.12.4</surefire.plugin.version>
+		<testng.version>6.8</testng.version>
 	</properties>
 
 	<dependencyManagement>
@@ -233,6 +237,9 @@
                             <exclude>**/.gitignore</exclude>
                             <exclude>**/.git/**</exclude>
                             <exclude>**/*.log</exclude>
+                            <exclude>**/*.versionsBackup</exclude>
+                            <exclude>**/*.md</exclude>
+                            <exclude>**/*.docx</exclude>
 <!--                            <exclude>**/*.txt</exclude>-->
 
                             <!-- Project-specific excludes -->
